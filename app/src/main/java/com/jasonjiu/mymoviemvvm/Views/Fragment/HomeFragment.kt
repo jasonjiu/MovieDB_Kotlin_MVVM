@@ -1,21 +1,16 @@
 package com.jasonjiu.mymoviemvvm.Views.Fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jasonjiu.mymoviemvvm.Adapter.MovieAdapter
-import com.jasonjiu.mymoviemvvm.R
 import com.jasonjiu.mymoviemvvm.Viewmodels.PopularMovieViewModel
-import com.jasonjiu.mymoviemvvm.databinding.CvMovieBinding
 import com.jasonjiu.mymoviemvvm.databinding.HomeFragmentBinding
-import com.jasonjiu.mymoviemvvm.models.Movie
 import kotlinx.android.synthetic.main.home_fragment.*
 
 class HomeFragment: Fragment() {
@@ -27,7 +22,6 @@ class HomeFragment: Fragment() {
         binding = HomeFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -41,7 +35,6 @@ class HomeFragment: Fragment() {
                 rvListMovie.adapter = MovieAdapter(it)
             }
         })
-
     }
 
 

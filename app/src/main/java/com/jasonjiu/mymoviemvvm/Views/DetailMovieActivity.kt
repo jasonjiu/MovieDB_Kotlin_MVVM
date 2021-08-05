@@ -1,44 +1,48 @@
 package com.jasonjiu.mymoviemvvm.Views
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.bumptech.glide.Glide
-import com.jasonjiu.mymoviemvvm.Utils.Constant
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import com.jasonjiu.mymoviemvvm.R
+import com.jasonjiu.mymoviemvvm.Viewmodels.FavoriteMovieViewModel
 import com.jasonjiu.mymoviemvvm.databinding.DetailMovieActivityBinding
+import com.jasonjiu.mymoviemvvm.models.Movie
 
 class DetailMovieActivity : AppCompatActivity() {
 
     companion object{
-        const val EXTRA_TITLE = "extra_title"
-        const val EXTRA_POPULARITY = "extra_popularity"
-        const val EXTRA_RELEASE = "extra_release"
-        const val EXTRA_RATING = "extra_rating"
-        const val EXTRA_BANNER = "extra_banner"
-        const val EXTRA_OVERVIEW ="extra_overview"
+        const val BUNDLE_DETAIL = "movie_details"
     }
 
+    private lateinit var viewModel: FavoriteMovieViewModel
+    private lateinit var binding: DetailMovieActivityBinding
+    private var isFav: Boolean? = null
+    private var movie: Movie? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = DetailMovieActivityBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        binding = DataBindingUtil.setContentView(this, R.layout.detail_movie_activity)
+        viewModel = ViewModelProvider(this).get(FavoriteMovieViewModel::class.java)
+        val bundle = intent.getBundleExtra(BUNDLE_DETAIL)
+        movie = bundle.getParcelable<Movie>(BUNDLE_DETAIL)
+        binding.detailMovie = movie
 
-        val getDetailTitle = intent.getStringExtra(EXTRA_TITLE)
-        val getDetailPopularirty = intent.getStringExtra(EXTRA_POPULARITY)
-        val getDetailRelease = intent.getStringExtra(EXTRA_RELEASE)
-        val getDetailRating = intent.getStringExtra(EXTRA_RATING)
-        val getDetailBanner = intent.getStringExtra(EXTRA_BANNER)
-        val getDetailOverview = intent.getStringExtra(EXTRA_OVERVIEW)
+        viewModel.getSingleMovie(movie?.movieId).observe(this, Observer {
+            isFav = it != null
+        })
 
-        binding.tvFilmName.text = getDetailTitle
-        binding.tvPopularity.text = getDetailPopularirty
-        binding.tvReleaseDate.text = getDetailRelease
-        binding.tvRating.text = getDetailRating
-        binding.movieOverview.text = getDetailOverview
-        Glide.with(this)
-                .load(Constant.IMAGE_BASE_URL + Constant.IMAGE_W500 + getDetailBanner)
-                .into(binding.ivFilmPhoto)
+        binding.addFavorite.setOnClickListener {
+            if (isFav!!) {
+                viewModel.deleteMovie(movie)
+                Toast.makeText(this, "Removed", Toast.LENGTH_SHORT).show()
+            } else {
+                viewModel.insertMovie(movie)
+                Toast.makeText(this, "Added", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
-
 
 }
